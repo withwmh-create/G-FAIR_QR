@@ -55,6 +55,11 @@ def verify_secure_token(token: str) -> bool:
         return False
 
 
+def clean_html(html_str: str) -> str:
+    """Strips leading and trailing whitespace from each line of HTML to prevent Markdown parser from treating it as a code block"""
+    return "\n".join(line.strip() for line in html_str.split("\n"))
+
+
 # Get absolute path of the directory containing this file
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 logo_path = os.path.join(BASE_DIR, "static", "images", "logo.png")
@@ -555,8 +560,8 @@ if token:
         </div>
         """
 
-    # Assemble and display premium verification card
-    st.markdown(f"""
+    # Assemble and display premium verification card with clean_html to prevent raw markdown code blocks
+    st.markdown(clean_html(f"""
     <div class="premium-wrapper" style="max-width: 680px;">
         <div style="text-align: center;">
             {verification_badge_html}
@@ -568,7 +573,7 @@ if token:
             <p>&copy; 2026 G-FAIR KOREA 2026. All Rights Reserved.</p>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """), unsafe_allow_html=True)
 
 else:
     # ==========================================
@@ -615,8 +620,8 @@ else:
         if os.path.exists(logo_path):
             st.image(logo_path, use_container_width=True)
 
-    # Open premium styled card container
-    st.markdown("""
+    # Open premium styled card container with clean_html to prevent raw markdown code blocks
+    st.markdown(clean_html("""
     <div class="premium-wrapper">
         <div class="premium-card">
             <h1 class="card-title">Buyer Verification QR</h1>
@@ -624,15 +629,15 @@ else:
                 <span class="pulse-dot"></span>
                 <span>Secure Token Rotating</span>
             </div>
-    """, unsafe_allow_html=True)
+    """), unsafe_allow_html=True)
     
     # Display the QR image NATIVELY inside the card using st.image to bypass browser sandbox CSP block
     col_qr1, col_qr2, col_qr3 = st.columns([1.25, 2, 1.25])
     with col_qr2:
         st.image(qr_bytes, use_container_width=True)
         
-    # Render progress bar, countdown info and close the container
-    st.markdown(f"""
+    # Render progress bar, countdown info and close the container with clean_html
+    st.markdown(clean_html(f"""
             <div class="countdown-container">
                 <div class="countdown-label">
                     <span>보안 승인 토큰 만료 및 갱신</span>
@@ -650,7 +655,7 @@ else:
             <p>&copy; 2026 G-FAIR KOREA 2026. All Rights Reserved.</p>
         </div>
     </div> <!-- Close premium-wrapper -->
-    """, unsafe_allow_html=True)
+    """), unsafe_allow_html=True)
     
     # Tick down remaining time by 1.0 second on each autorefresh trigger
     st.session_state.time_remaining -= 1.0
