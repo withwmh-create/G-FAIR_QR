@@ -752,11 +752,7 @@ else:
             help="배포 환경의 실제 주소에 맞춰 자동으로 QR 스캔 연결 주소가 매핑됩니다."
         )
         
-        # Logout action
-        if st.sidebar.button("로그아웃 🔓", use_container_width=True):
-            st.session_state.logged_in = False
-            st.session_state.user_info = None
-            st.rerun()
+        # Sidebar configurations remain clean and focused
 
         # Autorefresh smoothly every 1 second (1000ms)
         st_autorefresh(interval=1000, key="countdown_refresh")
@@ -821,15 +817,26 @@ else:
                     💡 게이트웨이 또는 파트너 데스크에 이 모바일 보안 바코드를 제시하세요. 상대방이 스캔하면 바이어님의 인증 정보 1개가 보관 해제되어 증명됩니다.
                 </div>
             </div> <!-- Close premium-card -->
-            
-            <div style="text-align: center; margin-top: 1rem;">
-                <p style="font-size:0.75rem; color: rgba(255, 255, 255, 0.25);">사용자 세션: {buyer_data['아이디']}</p>
-            </div>
-            
-            <div class="footer">
-                <p>&copy; 2026 G-FAIR KOREA 2026. All Rights Reserved.</p>
-            </div>
         </div> <!-- Close premium-wrapper -->
+        """), unsafe_allow_html=True)
+        
+        # Center-aligned main body logout and return to home button
+        st.write("")
+        col_out1, col_out2, col_out3 = st.columns([1, 2, 1])
+        with col_out2:
+            if st.button("로그아웃 및 인증 홈으로 🔓", use_container_width=True):
+                st.session_state.logged_in = False
+                st.session_state.user_info = None
+                st.rerun()
+
+        # Render small session signature and footer underneath the button
+        st.markdown(clean_html(f"""
+        <div style="text-align: center; margin-top: 1rem;">
+            <p style="font-size:0.75rem; color: rgba(255, 255, 255, 0.25);">사용자 세션: {buyer_data['아이디']}</p>
+        </div>
+        <div class="footer" style="margin-top: 1.5rem;">
+            <p>&copy; 2026 G-FAIR KOREA 2026. All Rights Reserved.</p>
+        </div>
         """), unsafe_allow_html=True)
 
         # Tick down remaining time by 1.0 second on each autorefresh trigger
