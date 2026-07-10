@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G-FAIR KOREA 2026</title>
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1e38 50%, #090d16 100%);
+            --card-bg: rgba(30, 41, 59, 0.45);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 2.5rem 1rem;
+            overflow-x: hidden;
+        }
+
+        /* Ambient background glow elements */
+        .ambient-glow-1 {
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            filter: blur(40px);
+            pointer-events: none;
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            bottom: 10%;
+            right: 10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            filter: blur(50px);
+            pointer-events: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 1;
+        }
+
+        /* Logo Branding */
+        .branding {
+            margin-bottom: 2rem;
+            text-align: center;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .logo-img {
+            max-width: 240px;
+            height: auto;
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Success & Expired Header Badges */
+        .verification-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2rem;
+            animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .verification-badge.success {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--accent-green);
+        }
+
+        .verification-badge.expired {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--accent-red);
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .badge-dot.success {
+            background-color: var(--accent-green);
+            box-shadow: 0 0 10px var(--accent-green);
+        }
+
+        .badge-dot.expired {
+            background-color: var(--accent-red);
+            box-shadow: 0 0 10px var(--accent-red);
+        }
+
+        /* Main Content Panel */
+        .content-panel {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
+            animation: fadeInUp 0.7s ease-out;
+        }
+
+        /* SUCCESS STATE STYLES */
+        .success-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .success-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .success-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        /* Buyer Cards Grid */
+        .buyer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .buyer-card {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .buyer-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(99, 102, 241, 0.25);
+            background: rgba(30, 41, 59, 0.5);
+            box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Left-side Avatar */
+        .buyer-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Middle-side Text Info */
+        .buyer-details {
+            flex-grow: 1;
+        }
+
+        .buyer-company {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 2px;
+            display: inline-block;
+            background: rgba(99, 102, 241, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .buyer-name-row {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .buyer-name {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .buyer-position {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Right-side Contact button */
+        .buyer-contact-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 8px 12px;
+            color: var(--text-main);
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .buyer-contact-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: scale(1.03);
+        }
+
+        .buyer-contact-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+
+        /* EXPIRED STATE STYLES */
+        .error-container {
+            text-align: center;
+            padding: 1rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .error-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.1);
+            animation: bounceIn 0.8s ease;
+        }
+
+        .error-icon-wrapper svg {
+            width: 40px;
+            height: 40px;
+            fill: var(--accent-red);
+        }
+
+        .error-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            letter-spacing: -0.01em;
+        }
+
+        .error-description {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            max-width: 480px;
+        }
+
+        .error-action-list {
+            text-align: left;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 14px;
+            padding: 1.25rem;
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .error-action-title {
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: var(--accent-red);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .error-action-list ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .error-action-list li {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .error-action-list li::before {
+            content: "•";
+            color: var(--accent-red);
+            font-weight: bold;
+        }
+
+        .btn-retry {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border: none;
+            color: #ffffff;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 12px 28px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.3);
+            text-decoration: none;
+        }
+
+        .btn-retry:hover {
+            box-shadow: 0 15px 25px -5px rgba(99, 102, 241, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Footer section in card */
+        .panel-footer {
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .security-level {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Footer Copyright */
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: rgba(148, 163, 184, 0.4);
+            animation: fadeIn 1s ease;
+        }
+
+        /* Toast Popup for clipboard copy */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            background: rgba(16, 185, 129, 0.95);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 999;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Keyframes */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            50% { opacity: 1; transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 520px) {
+            .content-panel {
+                padding: 1.5rem;
+            }
+            .buyer-card {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+            .buyer-contact-btn {
+                align-self: stretch;
+                justify-content: center;
+            }
+            .panel-footer {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <div class="container">
+        <!-- Logo Branding -->
+        <div class="branding">
+            <img src="/static/images/logo.png" alt="G-FAIR KOREA 2026 Brand Logo" class="logo-img">
+        </div>
+
+        <!-- Verification State Badge -->
+        {% if is_valid %}
+        <div class="verification-badge success">
+            <span class="badge-dot success"></span>
+            <span>Verified Secure Session</span>
+        </div>
+        {% else %}
+        <div class="verification-badge expired">
+            <span class="badge-dot expired"></span>
+            <span>Token Expired / Blocked</span>
+        </div>
+        {% endif %}
+
+        <!-- Main Panel -->
+        <div class="content-panel">
+            {% if is_valid %}
+            <!-- SUCCESS VIEW -->
+            <div class="success-header">
+                <h1 class="success-title">바이어 데이터베이스 조회</h1>
+                <p class="success-subtitle">보안 승인을 거쳐 복호화된 실시간 네트워킹 바이어 카드 목록입니다.</p>
+            </div>
+
+            <div class="buyer-grid">
+                {% for buyer in buyers %}
+                <div class="buyer-card">
+                    <!-- Avatar constructed from initials -->
+                    <div class="buyer-avatar">
+                        {{ buyer.이름[0] if buyer.이름 else 'B' }}
+                    </div>
+                    
+                    <div class="buyer-details">
+                        <span class="buyer-company">{{ buyer.회사명 }}</span>
+                        <div class="buyer-name-row">
+                            <span class="buyer-name">{{ buyer.이름 }}</span>
+                            <span class="buyer-position">{{ buyer.직급 }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Contact button with click-to-copy -->
+                    <button class="buyer-contact-btn" onclick="copyContact('{{ buyer.연락처 }}', '{{ buyer.이름 }}')">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M6.62 10.79c1.44 2.83 3.76 4.21 6.6 5.61l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                        </svg>
+                        <span>연락처 복사</span>
+                    </button>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="panel-footer">
+                <span class="security-level">
+                    <svg style="width:14px; height:14px; fill:currentColor;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
+                    </svg>
+                    AES-256 동적 토큰 검증 완료
+                </span>
+                <span>조회 시각: 2026-07-10</span>
+            </div>
+
+            {% else %}
+            <!-- EXPIRED / INVALID VIEW -->
+            <div class="error-container">
+                <div class="error-icon-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                    </svg>
+                </div>
+                
+                <h1 class="error-title">인증 토큰이 유효하지 않습니다</h1>
+                <p class="error-description">
+                    해당 세션은 유효시간(10초)이 초과되었거나 손상되었습니다. 바이어 보안 데이터 유출을 방지하기 위해 실시간 데이터 액세스가 자동으로 영구히 차단되었습니다.
+                </p>
+
+                <div class="error-action-list">
+                    <div class="error-action-title">해결 방법</div>
+                    <ul>
+                        <li>중앙 QR 코드 디스플레이 모니터링 화면으로 돌아갑니다.</li>
+                        <li>새로 갱신된(10초 이내) QR 코드를 스마트폰으로 다시 스캔해주세요.</li>
+                        <li>네트워크 상태 혹은 서버 시간 동기화 오차를 확인해 주세요.</li>
+                    </ul>
+                </div>
+
+                <a href="/" class="btn-retry">
+                    <svg style="width:18px; height:18px; fill:currentColor;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.07 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                    </svg>
+                    대시보드로 돌아가기
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2026 G-FAIR KOREA 2026. All Rights Reserved.</p>
+        </div>
+    </div>
+
+    <!-- Copy Status Toast -->
+    <div id="toast" class="toast">연락처가 복사되었습니다.</div>
+
+    <script>
+        function copyContact(contact, name) {
+            navigator.clipboard.writeText(contact).then(() => {
+                const toast = document.getElementById('toast');
+                toast.textContent = `${name} 바이어의 연락처(${contact})가 복사되었습니다.`;
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2500);
+            }).catch(err => {
+                console.error('클립보드 복사 실패:', err);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G-FAIR KOREA 2026</title>
+    <!-- Premium Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1e38 50%, #090d16 100%);
+            --card-bg: rgba(30, 41, 59, 0.45);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.35);
+            --secondary: #a855f7;
+            --accent-green: #10b981;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            padding: 2rem 1rem;
+        }
+
+        /* Ambient background glow elements */
+        .ambient-glow-1 {
+            position: absolute;
+            top: 20%;
+            left: 20%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            filter: blur(40px);
+            pointer-events: none;
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            bottom: 20%;
+            right: 20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            filter: blur(50px);
+            pointer-events: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            z-index: 1;
+        }
+
+        /* Branding logo wrapper */
+        .branding {
+            margin-bottom: 2.5rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .logo-img {
+            max-width: 280px;
+            height: auto;
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+            transition: transform 0.4s ease;
+        }
+
+        .logo-img:hover {
+            transform: scale(1.03);
+        }
+
+        /* Glassmorphic QR Card */
+        .qr-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 3rem 2rem 2.5rem 2.5rem;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 
+                        0 0 40px rgba(99, 102, 241, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Top glow strip */
+        .qr-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        /* Header in card */
+        .card-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-green);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-green);
+            animation: pulse 1.5s infinite;
+        }
+
+        /* QR Frame */
+        .qr-frame-wrapper {
+            position: relative;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .qr-frame-wrapper:hover {
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.15);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .qr-corner {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-color: var(--primary);
+            border-style: solid;
+            pointer-events: none;
+        }
+
+        .qr-corner-tl { top: 8px; left: 8px; border-width: 3px 0 0 3px; border-top-left-radius: 8px; }
+        .qr-corner-tr { top: 8px; right: 8px; border-width: 3px 3px 0 0; border-top-right-radius: 8px; }
+        .qr-corner-bl { bottom: 8px; left: 8px; border-width: 0 0 3px 3px; border-bottom-left-radius: 8px; }
+        .qr-corner-br { bottom: 8px; right: 8px; border-width: 0 3px 3px 0; border-bottom-right-radius: 8px; }
+
+        .qr-container {
+            background: #ffffff;
+            padding: 14px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+            width: 240px;
+            height: 240px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .qr-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            opacity: 1;
+            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .qr-image.refreshing {
+            opacity: 0.1;
+            transform: scale(0.9) rotate(-10deg);
+        }
+
+        /* Countdown & Progress bar */
+        .countdown-container {
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+
+        .countdown-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .timer-sec {
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-family: 'Outfit', sans-serif;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 9999px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 10px var(--primary-glow);
+            border-radius: 9999px;
+            transition: width 0.1s linear;
+        }
+
+        /* Info & Helper footer inside card */
+        .helper-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 8px 16px;
+            border-radius: 12px;
+            width: 100%;
+        }
+
+        .helper-text svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+            opacity: 0.7;
+        }
+
+        /* Footer copyrights */
+        .footer {
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: rgba(148, 163, 184, 0.4);
+            animation: fadeIn 1s ease-out;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.5; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+            70% { transform: scale(1); opacity: 1; box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            100% { transform: scale(0.95); opacity: 0.5; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 480px) {
+            .qr-card {
+                padding: 2rem 1.5rem 1.5rem 1.5rem;
+            }
+            .logo-img {
+                max-width: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <div class="container">
+        <!-- Brand Logo Space -->
+        <div class="branding">
+            <img src="/static/images/logo.png" alt="G-FAIR KOREA 2026 Brand Logo" class="logo-img">
+        </div>
+
+        <!-- Dynamic QR Display Card -->
+        <div class="qr-card">
+            <div class="card-header">
+                <h1 class="card-title">Buyer Verification QR</h1>
+                <div class="status-badge">
+                    <span class="pulse-dot"></span>
+                    <span>Secure Token Rotating</span>
+                </div>
+            </div>
+
+            <!-- QR Code Frame & Box -->
+            <div class="qr-frame-wrapper">
+                <div class="qr-corner qr-corner-tl"></div>
+                <div class="qr-corner qr-corner-tr"></div>
+                <div class="qr-corner qr-corner-bl"></div>
+                <div class="qr-corner qr-corner-br"></div>
+                
+                <div class="qr-container">
+                    <!-- Initially hidden, loaded via JavaScript -->
+                    <img id="qr-img" src="" alt="Secure QR Code" class="qr-image refreshing">
+                </div>
+            </div>
+
+            <!-- Countdown Timer Area -->
+            <div class="countdown-container">
+                <div class="countdown-label">
+                    <span>보안 승인 토큰 만료 및 갱신</span>
+                    <span class="timer-sec"><span id="timer-text">10.0</span>s</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div id="progress-bar" class="progress-bar-fill"></div>
+                </div>
+            </div>
+
+            <!-- Secure system hint footer -->
+            <div class="helper-text">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                </svg>
+                <span>스마트폰 카메라로 스캔하면 바이어 정보 페이지로 연결됩니다.</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2026 G-FAIR KOREA 2026. All Rights Reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        const qrImage = document.getElementById('qr-img');
+        const timerText = document.getElementById('timer-text');
+        const progressBar = document.getElementById('progress-bar');
+        
+        let timeLeft = 10.0;
+        let currentToken = "";
+        const intervalMs = 100; // Tick every 100ms for ultra-smooth rendering
+
+        // Function to fetch a new token and update QR image
+        async function rotateToken() {
+            try {
+                // Add a refreshing effect
+                qrImage.classList.add('refreshing');
+                
+                const response = await fetch('/api/get-token');
+                const data = await response.json();
+                
+                currentToken = data.token;
+                timeLeft = data.expires_in;
+                
+                // Set the QR image source
+                qrImage.src = `/generate-qr?token=${currentToken}`;
+                
+                // Wait for the image to load before fading back in
+                qrImage.onload = () => {
+                    qrImage.classList.remove('refreshing');
+                };
+            } catch (error) {
+                console.error("Token fetch failed:", error);
+                timerText.textContent = "Error";
+                progressBar.style.width = "0%";
+            }
+        }
+
+        // Timer interval logic
+        function startTimer() {
+            setInterval(() => {
+                if (timeLeft > 0) {
+                    timeLeft -= (intervalMs / 1000);
+                    if (timeLeft < 0) timeLeft = 0;
+                    
+                    // Update UI text (1 decimal place)
+                    timerText.textContent = timeLeft.toFixed(1);
+                    
+                    // Smoothly decrease progress bar width
+                    const percentage = (timeLeft / 10) * 100;
+                    progressBar.style.width = `${percentage}%`;
+                } else {
+                    // Trigger rotation when zero is reached
+                    rotateToken();
+                }
+            }, intervalMs);
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            rotateToken();
+            startTimer();
+        });
+    </script>
+</body>
+</html>
