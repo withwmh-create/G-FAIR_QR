@@ -114,6 +114,45 @@ if token:
             </div>
             """
 
+    # Build verification state HTML elements cleanly to avoid nested f-strings syntax issues
+    if is_valid:
+        verification_badge_html = "<div class='verification-badge success'><span class='badge-dot success'></span>Verified Secure Session</div>"
+        panel_content_html = f"""
+        <div class="success-header">
+            <h1 class="success-title">바이어 데이터베이스 조회</h1>
+            <p class="success-subtitle">보안 승인을 거쳐 복호화된 실시간 네트워킹 바이어 카드 목록입니다.</p>
+        </div>
+        <div class="buyer-grid">
+            {buyer_cards_html}
+        </div>
+        <div class="panel-footer">
+            <span class="security-level">✓ AES-256 동적 토큰 검증 완료</span>
+            <span>조회 시각: 2026-07-10</span>
+        </div>
+        """
+    else:
+        verification_badge_html = "<div class='verification-badge expired'><span class='badge-dot expired'></span>Token Expired / Blocked</div>"
+        panel_content_html = f"""
+        <div class="error-container">
+            <div class="error-icon-wrapper">
+                <span style="color:var(--accent-red); font-size: 2.5rem; font-weight: bold;">!</span>
+            </div>
+            <h1 class="error-title">인증 토큰이 유효하지 않습니다</h1>
+            <p class="error-description">
+                해당 세션은 유효시간(10초)이 초과되었거나 손상되었습니다. 바이어 보안 데이터 유출을 방지하기 위해 실시간 데이터 액세스가 자동으로 영구히 차단되었습니다.
+            </p>
+            <div class="error-action-list">
+                <div class="error-action-title">해결 방법</div>
+                <ul>
+                    <li>중앙 QR 코드 디스플레이 모니터링 화면으로 돌아갑니다.</li>
+                    <li>새로 갱신된(10초 이내) QR 코드를 스마트폰으로 다시 스캔해주세요.</li>
+                    <li>네트워크 상태 혹은 서버 시간 동기화 오차를 확인해 주세요.</li>
+                </ul>
+            </div>
+            <a href="/" target="_self" class="btn-retry">대시보드로 돌아가기</a>
+        </div>
+        """
+
     buyer_html_template = f"""
     <style>
         :root {{
@@ -434,45 +473,10 @@ if token:
             <img src="data:image/png;base64,{logo_b64}" alt="G-FAIR KOREA 2026 Brand Logo" class="logo-img">
         </div>
 
-        {"<div class='verification-badge success'><span class='badge-dot success'></span>Verified Secure Session</div>" if is_valid else "<div class='verification-badge expired'><span class='badge-dot expired'></span>Token Expired / Blocked</div>"}
+        {verification_badge_html}
 
         <div class="content-panel">
-            {"<!-- SUCCESS -->" if is_valid else "<!-- EXPIRED -->"}
-            {
-            f"""
-            <div class="success-header">
-                <h1 class="success-title">바이어 데이터베이스 조회</h1>
-                <p class="success-subtitle">보안 승인을 거쳐 복호화된 실시간 네트워킹 바이어 카드 목록입니다.</p>
-            </div>
-            <div class="buyer-grid">
-                {buyer_cards_html}
-            </div>
-            <div class="panel-footer">
-                <span class="security-level">✓ AES-256 동적 토큰 검증 완료</span>
-                <span>조회 시각: 2026-07-10</span>
-            </div>
-            """ if is_valid else
-            f"""
-            <div class="error-container">
-                <div class="error-icon-wrapper">
-                    <span style="color:var(--accent-red); font-size: 2.5rem; font-weight: bold;">!</span>
-                </div>
-                <h1 class="error-title">인증 토큰이 유효하지 않습니다</h1>
-                <p class="error-description">
-                    해당 세션은 유효시간(10초)이 초과되었거나 손상되었습니다. 바이어 보안 데이터 유출을 방지하기 위해 실시간 데이터 액세스가 자동으로 영구히 차단되었습니다.
-                </p>
-                <div class="error-action-list">
-                    <div class="error-action-title">해결 방법</div>
-                    <ul>
-                        <li>중앙 QR 코드 디스플레이 모니터링 화면으로 돌아갑니다.</li>
-                        <li>새로 갱신된(10초 이내) QR 코드를 스마트폰으로 다시 스캔해주세요.</li>
-                        <li>네트워크 상태 혹은 서버 시간 동기화 오차를 확인해 주세요.</li>
-                    </ul>
-                </div>
-                <a href="/" target="_self" class="btn-retry">대시보드로 돌아가기</a>
-            </div>
-            """
-            }
+            {panel_content_html}
         </div>
 
         <div class="footer">
