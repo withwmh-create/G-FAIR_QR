@@ -43,12 +43,12 @@ def verify_secure_token(token: str) -> bool:
         if not hmac.compare_digest(sig, expected_sig):
             return False
             
-        # Verify expiration (must be within 10 seconds)
+        # Verify expiration (Resilient window: allow up to 60s for scan/load and 10s for clock drift)
         current_time = int(time.time())
         age = current_time - timestamp
         
-        # Checking age within 0 to 10 seconds
-        if 0 <= age <= 10:
+        # Resilient tolerance window absorbing latency and clock drift
+        if -10 <= age <= 60:
             return True
         return False
     except Exception:
