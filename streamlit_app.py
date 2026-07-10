@@ -357,6 +357,32 @@ st.markdown("""
         justify-content: center;
     }
 
+    /* Premium interactive button overrides for perfect contrast and visibility */
+    .stButton button {
+        background-color: rgba(99, 102, 241, 0.18) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(99, 102, 241, 0.45) !important;
+        font-weight: 700 !important;
+        font-size: 0.95rem !important;
+        font-family: 'Outfit', 'Noto Sans KR', sans-serif !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+        border-radius: 12px !important;
+        padding: 10px 16px !important;
+    }
+
+    .stButton button:hover {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%) !important;
+        border-color: transparent !important;
+        color: #ffffff !important;
+        box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.45) !important;
+        transform: translateY(-2px) !important;
+    }
+
+    .stButton button:active {
+        transform: translateY(0) !important;
+    }
+
     /* Countdown bar */
     .countdown-container {
         width: 100%;
