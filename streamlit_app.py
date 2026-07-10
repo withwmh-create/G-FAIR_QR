@@ -161,10 +161,10 @@ st.markdown("""
         margin-bottom: 1.5rem;
     }
 
-    /* Custom form styling overrides for premium look */
+    /* Custom form styling overrides for premium look and high-contrast readability */
     .stTextInput>div>div>input {
         background-color: rgba(15, 23, 42, 0.5) !important;
-        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
         color: var(--text-main) !important;
         border-radius: 12px !important;
         padding: 10px 14px !important;
@@ -175,6 +175,23 @@ st.markdown("""
     .stTextInput>div>div>input:focus {
         border-color: var(--primary) !important;
         box-shadow: 0 0 10px var(--primary-glow) !important;
+    }
+
+    /* Force input labels to be bright, bold, and highly readable */
+    .stTextInput label, [data-testid="stWidgetLabel"] p {
+        color: #e2e8f0 !important; /* Premium Slate-White color for excellent visibility */
+        font-weight: 700 !important; /* Extra bold weighting */
+        font-size: 0.95rem !important;
+        letter-spacing: -0.01em !important;
+        margin-bottom: 8px !important;
+        display: block;
+        text-align: left !important;
+    }
+
+    /* High-contrast placeholder text */
+    .stTextInput input::placeholder {
+        color: rgba(255, 255, 255, 0.45) !important; /* Perfect balance: highly visible but distinct */
+        font-weight: 500 !important;
     }
 
     /* Badges */
