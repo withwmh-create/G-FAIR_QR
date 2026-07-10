@@ -575,11 +575,13 @@ else:
     # MAIN QR CODE GENERATION & ROTATION DASHBOARD
     # ==========================================
     
-    # Let the user configure the URL of their deployed Streamlit app
+    # Automatically determine the default URL based on host environment (Windows = local, Linux = Streamlit Cloud)
+    default_url = "http://localhost:8501" if os.name == "nt" else "https://g-fair-qr.streamlit.app"
+    
     st.sidebar.header("⚙️ 배포 설정")
     base_url = st.sidebar.text_input(
         "G-FAIR QR 배포 URL", 
-        value="http://localhost:8501",
+        value=default_url,
         help="Streamlit Cloud에 배포 완료 후, 발급받은 실제 URL(예: https://g-fair-qr.streamlit.app)을 입력하시면 QR 스캔 연결이 정상 가동됩니다."
     )
     
