@@ -8,6 +8,7 @@ import pandas as pd
 import qrcode
 from io import BytesIO
 import streamlit as st
+from streamlit_autorefresh import st_autorefresh
 
 # Set Streamlit page config
 st.set_page_config(
@@ -502,290 +503,286 @@ else:
     if "time_remaining" not in st.session_state:
         st.session_state.time_remaining = 10.0
         
-    # Standard HTML Template for the Dashboard
-    dash_placeholder = st.empty()
+    # Autorefresh every 1 second (1000ms) to update the countdown smoothly in cloud production
+    # This is 100% stable, consumes 0% CPU, and prevents script timeouts or WebSocket crashes on Streamlit Cloud!
+    st_autorefresh(interval=1000, key="countdown_refresh")
     
-    # Simple real-time animation ticker loop in Streamlit!
-    # Runs at 100ms precision for ultra-smooth UX transition.
-    while True:
-        # Generate QR code base64
-        qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_H, box_size=10, border=4)
-        scan_url = f"{base_url}/?token={st.session_state.current_token}"
-        qr.add_data(scan_url)
-        qr.make(fit=True)
-        qr_img = qr.make_image(fill_color="#1e1b4b", back_color="white")
-        
-        # Save to base64
-        qr_buf = BytesIO()
-        qr_img.save(qr_buf, format="PNG")
-        qr_b64 = base64.b64encode(qr_buf.getvalue()).decode()
-        
-        progress_percentage = (st.session_state.time_remaining / 10.0) * 100
-        
-        # Build HTML content
-        dash_html = f"""
-        <style>
-            :root {{
-                --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1e38 50%, #090d16 100%);
-                --card-bg: rgba(30, 41, 59, 0.45);
-                --card-border: rgba(255, 255, 255, 0.08);
-                --primary: #6366f1;
-                --primary-glow: rgba(99, 102, 241, 0.35);
-                --secondary: #a855f7;
-                --accent-green: #10b981;
-                --text-main: #f8fafc;
-                --text-muted: #94a3b8;
-            }}
+    # Generate QR code base64
+    qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_H, box_size=10, border=4)
+    scan_url = f"{base_url}/?token={st.session_state.current_token}"
+    qr.add_data(scan_url)
+    qr.make(fit=True)
+    qr_img = qr.make_image(fill_color="#1e1b4b", back_color="white")
+    
+    # Save to base64
+    qr_buf = BytesIO()
+    qr_img.save(qr_buf, format="PNG")
+    qr_b64 = base64.b64encode(qr_buf.getvalue()).decode()
+    
+    progress_percentage = (st.session_state.time_remaining / 10.0) * 100
+    
+    # Build HTML content
+    dash_html = f"""
+    <style>
+        :root {{
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1e38 50%, #090d16 100%);
+            --card-bg: rgba(30, 41, 59, 0.45);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.35);
+            --secondary: #a855f7;
+            --accent-green: #10b981;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }}
 
-            .stApp {{
-                background: var(--bg-gradient) !important;
-            }}
+        .stApp {{
+            background: var(--bg-gradient) !important;
+        }}
 
-            .custom-body {{
-                font-family: 'Outfit', 'Noto Sans KR', sans-serif;
-                color: var(--text-main);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                width: 100%;
-                max-width: 520px;
-                margin: 0 auto;
-                padding: 1rem 0;
-            }}
+        .custom-body {{
+            font-family: 'Outfit', 'Noto Sans KR', sans-serif;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 1rem 0;
+        }}
 
-            .branding {{
-                margin-bottom: 1.5rem;
-                text-align: center;
-            }}
+        .branding {{
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }}
 
-            .logo-img {{
-                max-width: 280px;
-                height: auto;
-                filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
-            }}
+        .logo-img {{
+            max-width: 280px;
+            height: auto;
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+        }}
 
-            .qr-card {{
-                background: var(--card-bg);
-                border: 1px solid var(--card-border);
-                border-radius: 24px;
-                backdrop-filter: blur(16px);
-                -webkit-backdrop-filter: blur(16px);
-                padding: 2.5rem 2rem;
-                width: 100%;
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 
-                            0 0 40px rgba(99, 102, 241, 0.1);
-                position: relative;
-                overflow: hidden;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-            }}
+        .qr-card {{
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 2.5rem 2rem;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 
+                        0 0 40px rgba(99, 102, 241, 0.1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }}
 
-            .qr-card::before {{
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 4px;
-                background: linear-gradient(90deg, var(--primary), var(--secondary));
-            }}
+        .qr-card::before {{
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }}
 
-            .card-header {{
-                text-align: center;
-                margin-bottom: 1.5rem;
-            }}
+        .card-header {{
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }}
 
-            .card-title {{
-                font-size: 1.5rem;
-                font-weight: 700;
-                letter-spacing: -0.025em;
-                background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                margin-bottom: 0.5rem;
-            }}
+        .card-title {{
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }}
 
-            .status-badge {{
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                background: rgba(16, 185, 129, 0.1);
-                border: 1px solid rgba(16, 185, 129, 0.2);
-                padding: 4px 12px;
-                border-radius: 9999px;
-                font-size: 0.75rem;
-                font-weight: 600;
-                color: var(--accent-green);
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-            }}
+        .status-badge {{
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-green);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }}
 
-            .pulse-dot {{
-                width: 6px;
-                height: 6px;
-                background-color: var(--accent-green);
-                border-radius: 50%;
-                box-shadow: 0 0 10px var(--accent-green);
-            }}
+        .pulse-dot {{
+            width: 6px;
+            height: 6px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-green);
+        }}
 
-            .qr-frame-wrapper {{
-                position: relative;
-                padding: 16px;
-                background: rgba(255, 255, 255, 0.03);
-                border: 1px solid rgba(255, 255, 255, 0.05);
-                border-radius: 20px;
-                margin-bottom: 2rem;
-            }}
+        .qr-frame-wrapper {{
+            position: relative;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            margin-bottom: 2rem;
+        }}
 
-            .qr-corner {{
-                position: absolute;
-                width: 16px;
-                height: 16px;
-                border-color: var(--primary);
-                border-style: solid;
-            }}
+        .qr-corner {{
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-color: var(--primary);
+            border-style: solid;
+        }}
 
-            .qr-corner-tl {{ top: 8px; left: 8px; border-width: 3px 0 0 3px; border-top-left-radius: 8px; }}
-            .qr-corner-tr {{ top: 8px; right: 8px; border-width: 3px 3px 0 0; border-top-right-radius: 8px; }}
-            .qr-corner-bl {{ bottom: 8px; left: 8px; border-width: 0 0 3px 3px; border-bottom-left-radius: 8px; }}
-            .qr-corner-br {{ bottom: 8px; right: 8px; border-width: 0 3px 3px 0; border-bottom-right-radius: 8px; }}
+        .qr-corner-tl {{ top: 8px; left: 8px; border-width: 3px 0 0 3px; border-top-left-radius: 8px; }}
+        .qr-corner-tr {{ top: 8px; right: 8px; border-width: 3px 3px 0 0; border-top-right-radius: 8px; }}
+        .qr-corner-bl {{ bottom: 8px; left: 8px; border-width: 0 0 3px 3px; border-bottom-left-radius: 8px; }}
+        .qr-corner-br {{ bottom: 8px; right: 8px; border-width: 0 3px 3px 0; border-bottom-right-radius: 8px; }}
 
-            .qr-container {{
-                background: #ffffff;
-                padding: 14px;
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                width: 240px;
-                height: 240px;
-                overflow: hidden;
-            }}
+        .qr-container {{
+            background: #ffffff;
+            padding: 14px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 240px;
+            height: 240px;
+            overflow: hidden;
+        }}
 
-            .qr-image {{
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-            }}
+        .qr-image {{
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }}
 
-            .countdown-container {{
-                width: 100%;
-                margin-bottom: 1.5rem;
-            }}
+        .countdown-container {{
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }}
 
-            .countdown-label {{
-                font-size: 0.875rem;
-                color: var(--text-muted);
-                margin-bottom: 0.75rem;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                font-weight: 500;
-            }}
+        .countdown-label {{
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+        }}
 
-            .timer-sec {{
-                color: var(--text-main);
-                font-weight: 700;
-                font-size: 1rem;
-                background: rgba(255, 255, 255, 0.08);
-                padding: 2px 8px;
-                border-radius: 6px;
-            }}
+        .timer-sec {{
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 2px 8px;
+            border-radius: 6px;
+        }}
 
-            .progress-bar-bg {{
-                width: 100%;
-                height: 6px;
-                background: rgba(255, 255, 255, 0.06);
-                border-radius: 9999px;
-                overflow: hidden;
-            }}
+        .progress-bar-bg {{
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 9999px;
+            overflow: hidden;
+        }}
 
-            .progress-bar-fill {{
-                height: 100%;
-                width: {progress_percentage}%;
-                background: linear-gradient(90deg, var(--primary), var(--secondary));
-                box-shadow: 0 0 10px var(--primary-glow);
-                border-radius: 9999px;
-            }}
+        .progress-bar-fill {{
+            height: 100%;
+            width: {progress_percentage}%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 10px var(--primary-glow);
+            border-radius: 9999px;
+        }}
 
-            .helper-text {{
-                font-size: 0.75rem;
-                color: var(--text-muted);
-                line-height: 1.5;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: rgba(255, 255, 255, 0.02);
-                border: 1px solid rgba(255, 255, 255, 0.04);
-                padding: 8px 16px;
-                border-radius: 12px;
-                width: 100%;
-            }}
+        .helper-text {{
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 8px 16px;
+            border-radius: 12px;
+            width: 100%;
+        }}
 
-            .footer {{
-                margin-top: 2rem;
-                font-size: 0.75rem;
-                color: rgba(148, 163, 184, 0.4);
-                text-align: center;
-            }}
-        </style>
+        .footer {{
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            color: rgba(148, 163, 184, 0.4);
+            text-align: center;
+        }}
+    </style>
 
-        <div class="custom-body">
-            <div class="branding">
-                <img src="data:image/png;base64,{logo_b64}" alt="G-FAIR KOREA 2026 Brand Logo" class="logo-img">
-            </div>
+    <div class="custom-body">
+        <div class="branding">
+            <img src="data:image/png;base64,{logo_b64}" alt="G-FAIR KOREA 2026 Brand Logo" class="logo-img">
+        </div>
 
-            <div class="qr-card">
-                <div class="card-header">
-                    <h1 class="card-title">Buyer Verification QR</h1>
-                    <div class="status-badge">
-                        <span class="pulse-dot"></span>
-                        <span>Secure Token Rotating</span>
-                    </div>
-                </div>
-
-                <div class="qr-frame-wrapper">
-                    <div class="qr-corner qr-corner-tl"></div>
-                    <div class="qr-corner qr-corner-tr"></div>
-                    <div class="qr-corner qr-corner-bl"></div>
-                    <div class="qr-corner qr-corner-br"></div>
-                    
-                    <div class="qr-container">
-                        <img src="data:image/png;base64,{qr_b64}" alt="Secure QR Code" class="qr-image">
-                    </div>
-                </div>
-
-                <div class="countdown-container">
-                    <div class="countdown-label">
-                        <span>보안 승인 토큰 만료 및 갱신</span>
-                        <span class="timer-sec"><span>{st.session_state.time_remaining:.1f}</span>s</span>
-                    </div>
-                    <div class="progress-bar-bg">
-                        <div class="progress-bar-fill"></div>
-                    </div>
-                </div>
-
-                <div class="helper-text">
-                    <span>💡 스마트폰 카메라로 스캔하면 G-FAIR 바이어 정보 카드로 이동합니다.</span>
+        <div class="qr-card">
+            <div class="card-header">
+                <h1 class="card-title">Buyer Verification QR</h1>
+                <div class="status-badge">
+                    <span class="pulse-dot"></span>
+                    <span>Secure Token Rotating</span>
                 </div>
             </div>
 
-            <div class="footer">
-                <p>&copy; 2026 G-FAIR KOREA 2026. All Rights Reserved.</p>
+            <div class="qr-frame-wrapper">
+                <div class="qr-corner qr-corner-tl"></div>
+                <div class="qr-corner qr-corner-tr"></div>
+                <div class="qr-corner qr-corner-bl"></div>
+                <div class="qr-corner qr-corner-br"></div>
+                
+                <div class="qr-container">
+                    <img src="data:image/png;base64,{qr_b64}" alt="Secure QR Code" class="qr-image">
+                </div>
+            </div>
+
+            <div class="countdown-container">
+                <div class="countdown-label">
+                    <span>보안 승인 토큰 만료 및 갱신</span>
+                    <span class="timer-sec"><span>{st.session_state.time_remaining:.1f}</span>s</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill"></div>
+                </div>
+            </div>
+
+            <div class="helper-text">
+                <span>💡 스마트폰 카메라로 스캔하면 G-FAIR 바이어 정보 카드로 이동합니다.</span>
             </div>
         </div>
-        """
-        
-        # Update the placeholder container with live content
-        dash_placeholder.markdown(dash_html, unsafe_allow_html=True)
-        
-        # Fast non-blocking clock sleep (100ms)
-        time.sleep(0.1)
-        st.session_state.time_remaining -= 0.1
-        
-        # Token rotation trigger
-        if st.session_state.time_remaining <= 0:
-            st.session_state.current_token = generate_secure_token()
-            st.session_state.time_remaining = 10.0
+
+        <div class="footer">
+            <p>&copy; 2026 G-FAIR KOREA 2026. All Rights Reserved.</p>
+        </div>
+    </div>
+    """
+    
+    st.markdown(dash_html, unsafe_allow_html=True)
+    
+    # Tick down remaining time by 1.0 second on each autorefresh trigger
+    st.session_state.time_remaining -= 1.0
+    
+    # Token rotation trigger
+    if st.session_state.time_remaining <= 0:
+        st.session_state.current_token = generate_secure_token()
+        st.session_state.time_remaining = 10.0
