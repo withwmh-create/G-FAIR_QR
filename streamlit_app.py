@@ -56,16 +56,20 @@ def verify_secure_token(token: str) -> bool:
         return False
 
 
-def get_image_base64(filepath) -> str:
-    """Converts a local image file to base64 string for seamless HTML embedding"""
+# Get absolute path of the directory containing this file
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+def get_image_base64(filename) -> str:
+    """Converts a local image file to base64 string using robust absolute pathing"""
+    filepath = os.path.join(BASE_DIR, filename)
     if os.path.exists(filepath):
         with open(filepath, "rb") as f:
             return base64.b64encode(f.read()).decode()
     return ""
 
 
-# Load files as base64 strings
-logo_b64 = get_image_base64("static/images/logo.png")
+# Load files as base64 strings with absolute paths
+logo_b64 = get_image_base64(os.path.join("static", "images", "logo.png"))
 
 # Routing based on Streamlit query parameters
 query_params = st.query_params
@@ -80,7 +84,7 @@ if token:
     error_msg = None
     
     if is_valid:
-        csv_path = "data/raw/buyers.csv"
+        csv_path = os.path.join(BASE_DIR, "data", "raw", "buyers.csv")
         if os.path.exists(csv_path):
             try:
                 # Read CSV data with pandas
