@@ -600,6 +600,11 @@ else:
     qr.make(fit=True)
     qr_img = qr.make_image(fill_color="#1e1b4b", back_color="white")
     
+    # Save the QR image to standard PNG bytes to prevent type mismatch on Streamlit
+    qr_buf = BytesIO()
+    qr_img.save(qr_buf, format="PNG")
+    qr_bytes = qr_buf.getvalue()
+    
     progress_percentage = (st.session_state.time_remaining / 10.0) * 100
     
     # Render Centered brand logo natively using st.image to guarantee CSP-immune execution
@@ -622,7 +627,7 @@ else:
     # Display the QR image NATIVELY inside the card using st.image to bypass browser sandbox CSP block
     col_qr1, col_qr2, col_qr3 = st.columns([1.25, 2, 1.25])
     with col_qr2:
-        st.image(qr_img, use_container_width=True)
+        st.image(qr_bytes, use_container_width=True)
         
     # Render progress bar, countdown info and close the container
     st.markdown(f"""
